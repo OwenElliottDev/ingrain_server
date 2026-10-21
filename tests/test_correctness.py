@@ -1,10 +1,11 @@
+import base64
+from io import BytesIO
+
+import numpy as np
+import open_clip
 import pytest
 import requests
-import numpy as np
 from PIL import Image
-from io import BytesIO
-import base64
-import open_clip
 from sentence_transformers import SentenceTransformer
 
 INFERENCE_BASE_URL = "http://127.0.0.1:8686"

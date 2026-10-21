@@ -1,8 +1,9 @@
-import time
-import ingrain
 import os
+import time
+
+import ingrain
 import requests
-from flask import Flask, request, render_template, jsonify, send_from_directory
+from flask import Flask, jsonify, render_template, request, send_from_directory
 
 # Constants
 HNSWLIB_SERVER_URL = "http://localhost:8685"

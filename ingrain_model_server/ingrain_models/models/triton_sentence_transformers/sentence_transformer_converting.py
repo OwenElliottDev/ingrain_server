@@ -1,24 +1,25 @@
 import os
+
 import torch
-from ingrain_models.models.model_optimisation import (
-    generate_tensorrt_config,
-    convert_to_float16,
-    optimize_onnx_model,
-)
 from ingrain_common.common import (
-    MAX_BATCH_SIZE,
     DYNAMIC_BATCHING,
-    MODEL_INSTANCES,
-    INSTANCE_KIND,
-    TENSORRT_ENABLED,
     FP16_ENABLED,
+    INSTANCE_KIND,
+    MAX_BATCH_SIZE,
+    MODEL_INSTANCES,
+    TENSORRT_ENABLED,
+)
+from ingrain_models.models.model_optimisation import (
+    convert_to_float16,
+    generate_tensorrt_config,
+    optimize_onnx_model,
 )
 from sentence_transformers import SentenceTransformer
 
 
 class SentenceTransformerWrapper(torch.nn.Module):
     def __init__(self, model: SentenceTransformer):
-        super(SentenceTransformerWrapper, self).__init__()
+        super().__init__()
         self.model = model
 
     def forward(self, input_ids, attention_mask):

@@ -9,42 +9,28 @@ on:
     tags: ['*.*.*']
 
 jobs:
-  black-formatter-check:
-    name: Black Formatter Check
+  ruff-formatter-check:
+    name: Ruff Formatter Check
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v10
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install black
-
-      - name: Run Black formatter check
-        run: black --check .
+      - name: Run Ruff formatter check
+        run: uvx ruff format --check .
 
   ruff-linter-check:
     name: Ruff Linter Check
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install ruff
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v10
 
       - name: Run Ruff linter check
-        run: ruff check .
+        run: uvx ruff check .

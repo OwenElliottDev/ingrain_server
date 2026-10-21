@@ -1,30 +1,31 @@
-import os
-import torch
-from torch import nn
-from torchvision.transforms import Compose, ToTensor
-from PIL import Image
-from io import BytesIO
 import base64
-from open_clip import CustomTextCLIP, CLIP
-from typing import Tuple, Any
-from ingrain_models.models.triton_open_clip.open_clip_wrappers import (
-    CLIPTextEncoderWrapper,
-    CLIPImageEncoderWrapper,
+import os
+from io import BytesIO
+from typing import Any
+
+import torch
+from ingrain_common.common import (
+    DYNAMIC_BATCHING,
+    INSTANCE_KIND,
+    MAX_BATCH_SIZE,
+    MODEL_INSTANCES,
+    TENSORRT_ENABLED,
 )
 from ingrain_models.models.model_optimisation import (
     generate_tensorrt_config,
     optimize_onnx_model,
 )
-from ingrain_common.common import (
-    MAX_BATCH_SIZE,
-    DYNAMIC_BATCHING,
-    MODEL_INSTANCES,
-    INSTANCE_KIND,
-    TENSORRT_ENABLED,
+from ingrain_models.models.triton_open_clip.open_clip_wrappers import (
+    CLIPImageEncoderWrapper,
+    CLIPTextEncoderWrapper,
 )
+from open_clip import CLIP, CustomTextCLIP
+from PIL import Image
+from torch import nn
+from torchvision.transforms import Compose, ToTensor
 
 
-def decompose_clip_preprocess(preprocess: Compose) -> Tuple[Compose, nn.Sequential]:
+def decompose_clip_preprocess(preprocess: Compose) -> tuple[Compose, nn.Sequential]:
     to_tensor_index = preprocess.transforms.index(ToTensor)
     pre_tensor_transforms = Compose(
         transforms=preprocess.transforms[: to_tensor_index + 1]
@@ -142,7 +143,7 @@ output [
 def generate_image_clip_config(
     cfg_path: str,
     name: str,
-    image_shape: Tuple[int, int, int],
+    image_shape: tuple[int, int, int],
     embedding_dim: int,
 ) -> None:
     config = f"""

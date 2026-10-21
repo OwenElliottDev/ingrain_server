@@ -1,23 +1,24 @@
-import os
-import torch
-from PIL import Image
-from io import BytesIO
-from torchvision.transforms import Compose, ToTensor
-from timm.data import MaybeToTensor, MaybePILToTensor
 import base64
+import os
+from io import BytesIO
+from typing import Any
+
+import torch
+from ingrain_common.common import (
+    DYNAMIC_BATCHING,
+    INSTANCE_KIND,
+    MAX_BATCH_SIZE,
+    MODEL_INSTANCES,
+    TENSORRT_ENABLED,
+)
 from ingrain_models.models.model_optimisation import (
     generate_tensorrt_config,
     optimize_onnx_model,
 )
 from ingrain_models.models.triton_timm.timm_wrappers import TimmClassifierWrapper
-from ingrain_common.common import (
-    MAX_BATCH_SIZE,
-    DYNAMIC_BATCHING,
-    INSTANCE_KIND,
-    MODEL_INSTANCES,
-    TENSORRT_ENABLED,
-)
-from typing import Tuple, Any
+from PIL import Image
+from timm.data import MaybePILToTensor, MaybeToTensor
+from torchvision.transforms import Compose, ToTensor
 
 
 def convert_timm_to_onnx(
@@ -54,7 +55,7 @@ def convert_timm_to_onnx(
 def generate_timm_config(
     cfg_path: str,
     name: str,
-    image_shape: Tuple[int, int, int],
+    image_shape: tuple[int, int, int],
     num_classes: int,
 ) -> None:
     config = f"""

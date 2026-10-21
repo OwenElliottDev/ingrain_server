@@ -4,7 +4,7 @@
 ![Build Status](https://github.com/OwenPendrighElliott/ingrain_server/actions/workflows/test-build.yml/badge.svg)
 ![Style](https://github.com/OwenPendrighElliott/ingrain_server/actions/workflows/code-style-check.yml/badge.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![GitHub release](https://img.shields.io/github/v/release/owenpendrighelliott/ingrain_server)](https://github.com/owenpendrighelliott/ingrain_server)
 
 
@@ -103,7 +103,9 @@ ingrn = ingrain.Client()
 
 model = ingrn.load_sentence_transformer_model(name="intfloat/e5-small-v2")
 
-response = model.infer_text(text=["I am a sentence.", "I am another sentence.", "I am a third sentence."])
+response = model.infer_text(
+    text=["I am a sentence.", "I am another sentence.", "I am a third sentence."]
+)
 
 print(f"Processing Time (ms): {response['processingTimeMs']}")
 print(f"Text Embeddings: {response['embeddings']}")
@@ -118,9 +120,11 @@ ingrn = ingrain.Client(return_numpy=True)
 
 model = client.load_sentence_transformer_model(name="intfloat/e5-small-v2")
 
-response = model.infer_text(text=["I am a sentence.", "I am another sentence.", "I am a third sentence."])
+response = model.infer_text(
+    text=["I am a sentence.", "I am another sentence.", "I am a third sentence."]
+)
 
-print(type(response['embeddings']))
+print(type(response["embeddings"]))
 ```
 
 ## Build Container Locally

@@ -82,9 +82,13 @@ The Python client has an optimised `pycurl` engine for which is much faster than
 import ingrain
 
 client = ingrain.Client()
-model = client.load_model(name="hf-hub:apple/MobileCLIP-S1-OpenCLIP", library="open_clip")
+model = client.load_model(
+    name="hf-hub:apple/MobileCLIP-S1-OpenCLIP", library="open_clip"
+)
 
-text_embedding_response = model.embed_text(["A sample text to embed.", "Another sample text."])
+text_embedding_response = model.embed_text(
+    ["A sample text to embed.", "Another sample text."]
+)
 
 embeddings = text_embedding_response.embeddings
 

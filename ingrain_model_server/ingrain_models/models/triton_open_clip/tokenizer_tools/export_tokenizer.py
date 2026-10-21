@@ -1,14 +1,14 @@
-from open_clip.tokenizer import SimpleTokenizer, SigLipTokenizer, HFTokenizer
-from tokenizers import Tokenizer
-import os
 import json
-from typing import Union, Optional
+import os
+
+from open_clip.tokenizer import HFTokenizer, SigLipTokenizer, SimpleTokenizer
+from tokenizers import Tokenizer
 
 
 def export_tokenizer(
-    tokenizer: Union[SimpleTokenizer, SigLipTokenizer, HFTokenizer],
+    tokenizer: SimpleTokenizer | SigLipTokenizer | HFTokenizer,
     folder_path: str,
-    text_clean: Optional[str] = None,
+    text_clean: str | None = None,
 ) -> None:
 
     context_length = tokenizer.context_length

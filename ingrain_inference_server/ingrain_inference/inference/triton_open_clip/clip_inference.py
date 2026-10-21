@@ -1,17 +1,16 @@
+import json
+import os
+
 import numpy as np
 import tritonclient.grpc as grpcclient
-from PIL import Image
-from tokenizers import Tokenizer, Encoding
-import os
-import json
+from ingrain_common.common import get_text_image_model_names
+from ingrain_inference.inference.inference_client import TritonModelInferenceClient
 from ingrain_inference.inference.preprocessors.image_preprocessor import (
     load_image_transform_config,
 )
 from ingrain_inference.inference.preprocessors.text_preprocessor import get_clean_fn
-from ingrain_common.common import get_text_image_model_names
-from ingrain_inference.inference.inference_client import TritonModelInferenceClient
-
-from typing import Union, List, Optional
+from PIL import Image
+from tokenizers import Encoding, Tokenizer
 
 
 class TritonCLIPInferenceClient(TritonModelInferenceClient):
@@ -19,7 +18,7 @@ class TritonCLIPInferenceClient(TritonModelInferenceClient):
         self,
         triton_grpc_url: str,
         model: str,
-        pretrained: Union[str, None],
+        pretrained: str | None,
         custom_model_dir: str,
         triton_model_repository_path: str,
     ):
@@ -80,9 +79,9 @@ class TritonCLIPInferenceClient(TritonModelInferenceClient):
 
     def encode_text(
         self,
-        text: Union[str, List[str]],
+        text: str | list[str],
         normalize: bool = True,
-        n_dims: Optional[int] = None,
+        n_dims: int | None = None,
     ) -> np.ndarray:
         if isinstance(text, str):
             text = [text]
@@ -90,7 +89,7 @@ class TritonCLIPInferenceClient(TritonModelInferenceClient):
         if self.clean_fn is not None:
             text = [self.clean_fn(t) for t in text]
 
-        encoding: List[Encoding] = self.tokenizer.encode_batch(
+        encoding: list[Encoding] = self.tokenizer.encode_batch(
             text, is_pretokenized=False
         )
 
@@ -119,9 +118,9 @@ class TritonCLIPInferenceClient(TritonModelInferenceClient):
 
     def encode_image(
         self,
-        image: Union[Image.Image, List[Image.Image]],
+        image: Image.Image | list[Image.Image],
         normalize: bool = True,
-        n_dims: Optional[int] = None,
+        n_dims: int | None = None,
     ) -> np.ndarray:
         if isinstance(image, Image.Image):
             image = [image]

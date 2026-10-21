@@ -3,6 +3,7 @@ name = "ingrain-server"
 version = "0.2.1"
 description = "Dev tools for Repo"
 readme = "README.md"
+requires-python = ">=3.11"
 dependencies = [
     "ingrain>=0.2.3",
 ]
@@ -35,7 +36,6 @@ dev = [
     "validators==0.36.0",
     "huggingface_hub[hf_xet]>=1.3.0",
     "pytest>=9.1.1",
-    "black>=26.10.1",
     "ruff>=0.17.1",
 ]
 
@@ -51,7 +51,3 @@ torch = [
 torchvision = [
   { index = "pytorch-cpu" },
 ]
-
-[tool.ruff.lint]
-# Pin to ruff's original default rule set; newer ruff defaults enable many more rules
-select = ["E4", "E7", "E9", "F"]

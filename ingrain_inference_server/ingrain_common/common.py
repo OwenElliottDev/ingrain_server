@@ -1,14 +1,14 @@
 import os
-import shutil
 import platform
-from typing import Union, Tuple, Literal
+import shutil
+from typing import Literal
 
-MAX_BATCH_SIZE = int(os.getenv("MAX_BATCH_SIZE", 32))
+MAX_BATCH_SIZE = int(os.getenv("MAX_BATCH_SIZE", "32"))
 DYNAMIC_BATCHING = os.getenv("DYNAMIC_BATCHING", "true").lower() == "true"
-INSTANCE_KIND: Literal["KIND_GPU", "KIND_CPU", None] = os.getenv("INSTANCE_KIND")
+INSTANCE_KIND: Literal["KIND_GPU", "KIND_CPU"] | None = os.getenv("INSTANCE_KIND")
 TENSORRT_ENABLED = os.getenv("TENSORRT_ENABLED", "false").lower() == "true"
 FP16_ENABLED = os.getenv("FP16_ENABLED", "false").lower() == "true"
-MODEL_INSTANCES = int(os.getenv("MODEL_INSTANCES", 0))
+MODEL_INSTANCES = int(os.getenv("MODEL_INSTANCES", "0"))
 
 
 def validate_env_vars() -> None:
@@ -41,7 +41,7 @@ def validate_env_vars() -> None:
             )
 
 
-def get_model_name(model_name: str, pretrained: Union[str, bool, None] = None) -> str:
+def get_model_name(model_name: str, pretrained: str | bool | None = None) -> str:
     """Get the model name.
 
     Args:
@@ -58,8 +58,8 @@ def get_model_name(model_name: str, pretrained: Union[str, bool, None] = None) -
 
 
 def get_text_image_model_names(
-    model_name: str, pretrained: Union[str, None] = None
-) -> Tuple[str, str]:
+    model_name: str, pretrained: str | None = None
+) -> tuple[str, str]:
     """Get the text and image encoder model names.
 
     Args:
@@ -77,7 +77,7 @@ def get_text_image_model_names(
 
 
 def delete_model_from_repo(
-    model_name: str, pretrained: Union[str, None], triton_model_repository_path: str
+    model_name: str, pretrained: str | None, triton_model_repository_path: str
 ) -> None:
     """Delete the model from the Triton model repository.
 
@@ -179,10 +179,7 @@ def is_valid_dir_name(name: str) -> bool:
     if platform.system() == "Windows" and name.upper() in reserved_names:
         return False
 
-    if len(name) > 255:
-        return False
-
-    return True
+    return len(name) <= 255
 
 
 def custom_model_exists(
@@ -206,7 +203,4 @@ def custom_model_exists(
         return False
 
     model_dir = os.path.join(custom_model_dir, model_name)
-    if not os.path.exists(model_dir):
-        return False
-
-    return True
+    return os.path.exists(model_dir)

@@ -1,8 +1,6 @@
-from torchvision.transforms.functional import InterpolationMode
-from torchvision.transforms import Compose, Resize, CenterCrop
 from PIL import Image
-
-from typing import List
+from torchvision.transforms import CenterCrop, Compose, Resize
+from torchvision.transforms.functional import InterpolationMode
 
 
 def convert_interpolation(interp: InterpolationMode) -> int:
@@ -18,7 +16,7 @@ def convert_interpolation(interp: InterpolationMode) -> int:
     return mapping[interp]
 
 
-def image_transform_dict_from_torch_transforms(transforms: Compose) -> List[dict]:
+def image_transform_dict_from_torch_transforms(transforms: Compose) -> list[dict]:
     transform_dict = []
     last_resize_size = None
     for transform in transforms.transforms:

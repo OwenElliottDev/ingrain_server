@@ -46,8 +46,8 @@ Performs text inference using the specified model.
     client = ingrain.Client()
 
     response = client.embed_text(
-        name="intfloat/e5-small-v2", 
-        text="sample text", 
+        name="intfloat/e5-small-v2",
+        text="sample text",
     )
     ```
 
@@ -85,8 +85,7 @@ Performs image inference using the specified model.
 
     client = ingrain.Client()
     response = client.embed_image(
-        name="hf-hub:apple/MobileCLIP-S1-OpenCLIP", 
-        image="http://example.com/image.jpg"
+        name="hf-hub:apple/MobileCLIP-S1-OpenCLIP", image="http://example.com/image.jpg"
     )
     ```
 
@@ -125,9 +124,9 @@ Performs both text and image inference concurrently, can do either or both toget
 
     client = ingrain.Client()
     response = client.embed(
-        name="hf-hub:apple/MobileCLIP-S1-OpenCLIP", 
-        image="http://example.com/image.jpg", 
-        text="sample text"
+        name="hf-hub:apple/MobileCLIP-S1-OpenCLIP",
+        image="http://example.com/image.jpg",
+        text="sample text",
     )
     ```
 
@@ -162,8 +161,7 @@ Performs image classification using the specified model.
 
     client = ingrain.Client()
     response = client.classify_image(
-        name="hf-hub:apple/MobileCLIP-S1-OpenCLIP", 
-        image="http://example.com/image.jpg"
+        name="hf-hub:apple/MobileCLIP-S1-OpenCLIP", image="http://example.com/image.jpg"
     )
     ```
 

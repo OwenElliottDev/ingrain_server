@@ -1,7 +1,8 @@
-import ingrain
-import time
-import threading
 import statistics
+import threading
+import time
+
+import ingrain
 
 # Configuration
 model_name = "intfloat/e5-small-v2"

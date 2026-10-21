@@ -1,9 +1,8 @@
-import os
-import requests
 import json
-from ingrain_common.common import is_valid_dir_name
+import os
 
-from typing import Optional, List
+import requests
+from ingrain_common.common import is_valid_dir_name
 
 
 def download_custom_model(url: str, checkpoint_name: str, custom_model_dir: str) -> str:
@@ -27,8 +26,7 @@ def download_custom_model(url: str, checkpoint_name: str, custom_model_dir: str)
     with requests.get(url, stream=True) as response:
         response.raise_for_status()
         with open(model_file_path, "wb") as f:
-            for chunk in response.iter_content(chunk_size=2**14):
-                f.write(chunk)
+            f.writelines(response.iter_content(chunk_size=2**14))
 
     return model_file_path
 
@@ -55,8 +53,7 @@ def download_custom_model_auxillary_file(
     with requests.get(url, stream=True) as response:
         response.raise_for_status()
         with open(file_path, "wb") as f:
-            for chunk in response.iter_content(chunk_size=2**10):
-                f.write(chunk)
+            f.writelines(response.iter_content(chunk_size=2**10))
 
     return file_path
 
@@ -208,11 +205,11 @@ def download_custom_open_clip_model(
     custom_model_dir: str,
     model_name: str,
     model_url: str,
-    mode: Optional[str] = None,
-    mean: Optional[List[float]] = None,
-    std: Optional[List[float]] = None,
-    interpolation: Optional[str] = None,
-    resize_mode: Optional[str] = None,
+    mode: str | None = None,
+    mean: list[float] | None = None,
+    std: list[float] | None = None,
+    interpolation: str | None = None,
+    resize_mode: str | None = None,
 ) -> None:
     """Download a OpenCLIP model from a URL.
 

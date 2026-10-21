@@ -1,13 +1,13 @@
-import tritonclient.grpc as grpcclient
-import numpy as np
-from PIL import Image
 import base64
-import certifi
-import pycurl
-from io import BytesIO
-import validators
 from concurrent.futures import ThreadPoolExecutor
-from typing import List, Union, Optional
+from io import BytesIO
+
+import certifi
+import numpy as np
+import pycurl
+import tritonclient.grpc as grpcclient
+import validators
+from PIL import Image
 
 
 class TritonModelInferenceClient:
@@ -19,30 +19,30 @@ class TritonModelInferenceClient:
 
     def encode_text(
         self,
-        text: Union[str, List[str]],
+        text: str | list[str],
         normalize: bool = True,
-        n_dims: Optional[int] = None,
+        n_dims: int | None = None,
     ) -> np.ndarray:
         raise NotImplementedError
 
     def encode_image(
         self,
-        image: Union[Image.Image, List[Image.Image]],
+        image: Image.Image | list[Image.Image],
         normalize: bool = True,
-        n_dims: Optional[int] = None,
+        n_dims: int | None = None,
     ) -> np.ndarray:
         raise NotImplementedError
 
     def classify_image(
         self,
-        image: Union[Image.Image, List[Image.Image]],
-    ) -> Union[np.ndarray, List[List[str]]]:
+        image: Image.Image | list[Image.Image],
+    ) -> np.ndarray | list[list[str]]:
         raise NotImplementedError
 
     def classify_text(
         self,
-        text: Union[str, List[str]],
-    ) -> Union[np.ndarray, List[List[str]]]:
+        text: str | list[str],
+    ) -> np.ndarray | list[list[str]]:
         raise NotImplementedError
 
     def unload(self):
@@ -55,7 +55,7 @@ class TritonModelInferenceClient:
         raise NotImplementedError
 
     def download_image(
-        self, url: str, image_download_headers: Optional[dict] = None
+        self, url: str, image_download_headers: dict | None = None
     ) -> Image.Image:
         buffer = BytesIO()
         c = pycurl.Curl()
@@ -84,7 +84,7 @@ class TritonModelInferenceClient:
         return Image.open(buffer).convert("RGB")
 
     def load_image(
-        self, image: str, image_download_headers: Optional[dict] = None
+        self, image: str, image_download_headers: dict | None = None
     ) -> Image.Image:
         image_data = None
         if validators.url(image):
@@ -97,8 +97,8 @@ class TritonModelInferenceClient:
         return image_data
 
     def load_images_parallel(
-        self, images: List[str], image_download_headers: Optional[dict] = None
-    ) -> List[Image.Image]:
+        self, images: list[str], image_download_headers: dict | None = None
+    ) -> list[Image.Image]:
         def load_with_headers(image_url: str) -> Image.Image:
             return self.load_image(
                 image_url, image_download_headers=image_download_headers
