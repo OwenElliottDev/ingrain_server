@@ -6,7 +6,6 @@ from io import BytesIO
 import base64
 import timm
 
-
 INFERENCE_BASE_URL = "http://127.0.0.1:8686"
 MODEL_BASE_URL = "http://127.0.0.1:8687"
 

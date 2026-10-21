@@ -1,5 +1,4 @@
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import ORJSONResponse
 import time
 import asyncio
 from ingrain_inference.api_models.request_models import (
@@ -35,13 +34,12 @@ import tritonclient.grpc as grpcclient
 import os
 from typing import Union
 
-
 TRITON_GRPC_URL = os.getenv("TRITON_GRPC_URL", "localhost:8001")
 TRITON_CLIENT = grpcclient.InferenceServerClient(url=TRITON_GRPC_URL, verbose=False)
 TRITON_MODEL_REPOSITORY_PATH = "model_repository"
 CUSTOM_MODEL_DIR = "custom_model_files"
 
-app = FastAPI(default_response_class=ORJSONResponse)
+app = FastAPI()
 
 # Model cache and lock
 MODEL_CACHE = LRUModelCache(capacity=5)

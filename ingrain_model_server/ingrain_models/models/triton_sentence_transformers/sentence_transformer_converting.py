@@ -105,6 +105,7 @@ def onnx_transformer_model(
                 "attention_mask": {0: "batch_size", 1: "sequence_length"},
                 "sentence_embedding": {0: "batch_size"},
             },
+            dynamo=False,
         )
 
     optimize_onnx_model(output_path, output_path)

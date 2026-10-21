@@ -2,7 +2,7 @@
 FROM ghcr.io/astral-sh/uv:python3.11-bookworm-slim
 
 # Install the required packages
-RUN apt-get update && apt-get install -y cmake build-essential
+RUN apt-get update && apt-get install -y cmake build-essential git
 
 # Set the working directory
 WORKDIR /app

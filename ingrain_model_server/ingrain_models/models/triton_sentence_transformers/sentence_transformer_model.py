@@ -57,7 +57,7 @@ def create_model(
     generate_text_sentence_transformer_config(
         os.path.join(triton_model_repository_path, friendly_name),
         friendly_name,
-        model.get_sentence_embedding_dimension(),
+        model.get_embedding_dimension(),
     )
 
     save_library_name(

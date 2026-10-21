@@ -5,7 +5,6 @@ import base64
 from tqdm import tqdm
 from concurrent.futures import ProcessPoolExecutor
 
-
 # Constants
 HNSWLIB_SERVER_URL = "http://localhost:8685"
 IMAGE_DIR = "images"
