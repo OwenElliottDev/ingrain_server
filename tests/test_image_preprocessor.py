@@ -1,10 +1,11 @@
+from PIL import Image
+
 from ingrain_inference_server.ingrain_inference.inference.preprocessors.image_preprocessor import (
+    ConvertToRGB,
     ImagePreprocessor,
     ResizeImage,
-    ConvertToRGB,
     image_transform_from_dict,
 )
-from PIL import Image
 
 
 def test_resize_image():

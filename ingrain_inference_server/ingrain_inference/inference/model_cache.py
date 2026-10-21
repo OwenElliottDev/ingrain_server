@@ -1,29 +1,26 @@
 import collections
+
 from ingrain_inference.inference.triton_open_clip.clip_inference import (
     TritonCLIPInferenceClient,
+)
+from ingrain_inference.inference.triton_sentence_transformers.sentence_transformer_inference import (
+    TritonSentenceTransformersInferenceClient,
 )
 from ingrain_inference.inference.triton_timm.timm_inference import (
     TritonTimmInferenceClient,
 )
 
-from ingrain_inference.inference.triton_sentence_transformers.sentence_transformer_inference import (
-    TritonSentenceTransformersInferenceClient,
-)
-from typing import Union, Dict, Tuple
-
 
 class LRUModelCache:
     def __init__(self, capacity: int):
         self.capacity: int = capacity
-        self.data: Dict[
-            Tuple[str, Union[str, None]],
-            Union[
-                TritonCLIPInferenceClient,
-                TritonSentenceTransformersInferenceClient,
-                TritonTimmInferenceClient,
-            ],
+        self.data: dict[
+            tuple[str, str | None],
+            TritonCLIPInferenceClient
+            | TritonSentenceTransformersInferenceClient
+            | TritonTimmInferenceClient,
         ] = {}
-        self.loaded: Dict[Tuple[str, Union[str, None]], bool] = {}
+        self.loaded: dict[tuple[str, str | None], bool] = {}
         self.usage_order = collections.OrderedDict()
         self.hits: int = 0
         self.misses: int = 0
@@ -34,19 +31,21 @@ class LRUModelCache:
     def keys(self):
         return self.data.keys()
 
-    def remove(self, key: Tuple[str, Union[str, None]]) -> None:
+    def remove(self, key: tuple[str, str | None]) -> None:
         if key in self.data:
             self.data[key].unload()
             del self.data[key]
             del self.loaded[key]
             del self.usage_order[key]
 
-    def get(self, key: Tuple[str, Union[str, None]]) -> Union[
-        TritonTimmInferenceClient,
-        TritonCLIPInferenceClient,
-        TritonSentenceTransformersInferenceClient,
-        None,
-    ]:
+    def get(
+        self, key: tuple[str, str | None]
+    ) -> (
+        TritonTimmInferenceClient
+        | TritonCLIPInferenceClient
+        | TritonSentenceTransformersInferenceClient
+        | None
+    ):
         if key not in self.data:
             self.misses += 1
             return None
@@ -63,12 +62,12 @@ class LRUModelCache:
 
     def put(
         self,
-        key: Tuple[str, Union[str, None]],
-        value: Union[
-            TritonTimmInferenceClient,
-            TritonCLIPInferenceClient,
-            TritonSentenceTransformersInferenceClient,
-        ],
+        key: tuple[str, str | None],
+        value: (
+            TritonTimmInferenceClient
+            | TritonCLIPInferenceClient
+            | TritonSentenceTransformersInferenceClient
+        ),
     ) -> None:
         if self.capacity <= 0:
             return

@@ -165,5 +165,7 @@ Retrieves the classification labels for a specific model.
     import ingrain
 
     client = ingrain.Client()
-    resp = client.model_classification_labels(name="hf_hub:timm/mobilenetv4_conv_medium.e250_r384_in12k_ft_in1k")
+    resp = client.model_classification_labels(
+        name="hf_hub:timm/mobilenetv4_conv_medium.e250_r384_in12k_ft_in1k"
+    )
     ```

@@ -1,12 +1,11 @@
-import os
 import json
+import os
+
 import numpy as np
 import tritonclient.grpc as grpcclient
-from tokenizers import Tokenizer, Encoding
+from ingrain_common.common import custom_model_exists, get_model_name
 from ingrain_inference.inference.inference_client import TritonModelInferenceClient
-from ingrain_common.common import get_model_name, custom_model_exists
-
-from typing import Union, List, Optional
+from tokenizers import Encoding, Tokenizer
 
 
 def get_sentence_transformers_parameters(model_dir: str) -> dict:
@@ -63,13 +62,13 @@ class TritonSentenceTransformersInferenceClient(TritonModelInferenceClient):
 
     def encode_text(
         self,
-        text: Union[str, List[str]],
+        text: str | list[str],
         normalize: bool = True,
-        n_dims: Optional[int] = None,
+        n_dims: int | None = None,
     ) -> np.ndarray:
         if isinstance(text, str):
             text = [text]
-        encoding: List[Encoding] = self.tokenizer.encode_batch(
+        encoding: list[Encoding] = self.tokenizer.encode_batch(
             text, is_pretokenized=False
         )
         max_len = max([len(e.ids) for e in encoding])

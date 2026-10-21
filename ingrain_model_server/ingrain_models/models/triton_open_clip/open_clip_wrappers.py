@@ -1,7 +1,7 @@
 import torch
+from open_clip.transformer import text_global_pool
 from torch import nn
 from torchvision.transforms import Compose, ToTensor
-from open_clip.transformer import text_global_pool
 
 
 class CLIPTextEncoderWrapper(nn.Module):

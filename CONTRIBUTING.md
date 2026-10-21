@@ -51,6 +51,6 @@ uv run pytest --integration
 All code checks should pass before raising a PR. You can run the checks locally using:
 
 ```bash
-uv run black . --check
+uv run ruff format --check
 uv run ruff check
 ```

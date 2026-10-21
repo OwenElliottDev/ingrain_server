@@ -1,10 +1,10 @@
-import os
-import ingrain
 import json
+import os
+from concurrent.futures import ThreadPoolExecutor
+
+import ingrain
 import requests
 from tqdm import tqdm
-from concurrent.futures import ThreadPoolExecutor
-from typing import List
 
 # Constants
 HNSWLIB_SERVER_URL = "http://localhost:8685"
@@ -38,7 +38,7 @@ response = requests.post(
 
 
 # Function to process a batch of corpus data
-def process_batch(corpus_batch: List[dict]):
+def process_batch(corpus_batch: list[dict]):
     client = ingrain.Client(return_numpy=False)
     texts = [PASSAGE_PREFIX + doc["text"] for doc in corpus_batch]
     try:
@@ -46,7 +46,7 @@ def process_batch(corpus_batch: List[dict]):
         embeddings = response.text_embeddings
         ids = [doc["_id"] for doc in corpus_batch]
         return list(zip(ids, embeddings))
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - log and skip any failed batch
         print(f"Error processing batch: {e}")
         return []
 

@@ -1,6 +1,6 @@
 import flask
 import ingrain
-from flask import request, jsonify, render_template
+from flask import jsonify, render_template, request
 
 app = flask.Flask(__name__)
 

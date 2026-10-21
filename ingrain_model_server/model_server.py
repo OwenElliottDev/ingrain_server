@@ -1,42 +1,41 @@
-from fastapi import FastAPI, Request, HTTPException, Query
-from starlette.responses import JSONResponse
-import os
 import asyncio
-from ingrain_models.api_models.request_models import (
-    LoadModelRequest,
-    UnloadModelRequest,
-    DownloadCustomModelRequest,
-)
-from ingrain_models.api_models.response_models import (
-    GenericMessageResponse,
-    LoadedModelResponse,
-    LoadedModelData,
-    RepositoryModelResponse,
-    RepositoryModel,
-    ModelEmbeddingDimsResponse,
-    ModelClassificationLabelsResponse,
-)
-from ingrain_models.models.model_client import TritonModelLoadingClient
+import os
+from typing import Literal
 
+import tritonclient.grpc as grpcclient
+from fastapi import FastAPI, HTTPException, Query, Request
 from ingrain_common.common import (
     delete_model_from_repo,
     get_library_name,
     get_model_name,
+    get_model_source_name,
     get_text_image_model_names,
     validate_env_vars,
-    get_model_source_name,
+)
+from ingrain_models.api_models.request_models import (
+    DownloadCustomModelRequest,
+    LoadModelRequest,
+    UnloadModelRequest,
+)
+from ingrain_models.api_models.response_models import (
+    GenericMessageResponse,
+    LoadedModelData,
+    LoadedModelResponse,
+    ModelClassificationLabelsResponse,
+    ModelEmbeddingDimsResponse,
+    RepositoryModel,
+    RepositoryModelResponse,
 )
 from ingrain_models.models.custom_model_utils import (
     download_custom_open_clip_model,
     download_custom_sentence_transformers_model,
     download_custom_timm_model,
 )
-import tritonclient.grpc as grpcclient
-
-from typing import Union, Literal
+from ingrain_models.models.model_client import TritonModelLoadingClient
+from starlette.responses import JSONResponse
 
 TRITON_GRPC_URL = os.getenv("TRITON_GRPC_URL", "localhost:8001")
-MAX_LOADED_MODELS = int(os.getenv("MAX_LOADED_MODELS", 5))
+MAX_LOADED_MODELS = int(os.getenv("MAX_LOADED_MODELS", "5"))
 TRITON_CLIENT = grpcclient.InferenceServerClient(url=TRITON_GRPC_URL, verbose=False)
 TRITON_MODEL_REPOSITORY_PATH = "model_repository"
 CUSTOM_MODEL_DIR = "custom_model_files"
@@ -88,7 +87,7 @@ def count_loaded_models() -> tuple[int, list[str], list[str]]:
     return len(models), models, libraries
 
 
-def get_library_name_for_model(model_name: str, pretrained: Union[str, None]) -> str:
+def get_library_name_for_model(model_name: str, pretrained: str | None) -> str:
     triton_model_name = get_model_name(model_name, pretrained)
     try:
         library_name = get_library_name(
@@ -108,7 +107,7 @@ def get_library_name_for_model(model_name: str, pretrained: Union[str, None]) ->
 
 def get_model_creation_client(
     model_name: str,
-    pretrained: Union[str, None],
+    pretrained: str | None,
     model_library: Literal["open_clip", "sentence_transformers", "timm"],
 ) -> TritonModelLoadingClient:
     return TritonModelLoadingClient(
@@ -126,7 +125,7 @@ async def route_timeout_middleware(request: Request, call_next):
     if request.url.path == "/load_model":
         try:
             return await asyncio.wait_for(call_next(request), timeout=600)
-        except asyncio.TimeoutError:
+        except TimeoutError:
             return JSONResponse({"error": "Request timed out"}, status_code=504)
     else:
         return await call_next(request)
@@ -149,7 +148,7 @@ async def load_model(request: LoadModelRequest) -> GenericMessageResponse:
     except ValueError as e:
         raise HTTPException(
             status_code=400,
-            detail=f"Error in creating model client: {str(e)}",
+            detail=f"Error in creating model client: {e!s}",
         )
     if not client.is_ready():
         loaded_models, models, _ = count_loaded_models()
@@ -166,7 +165,7 @@ async def load_model(request: LoadModelRequest) -> GenericMessageResponse:
     except grpcclient.InferenceServerException as e:
         raise HTTPException(
             status_code=500,
-            detail=f"Error loading model {model_name}: {str(e)}\nIt is possible that triton is unavailable, the model is not compatible, or that the incorrect model repository directory is being use.",
+            detail=f"Error loading model {model_name}: {e!s}\nIt is possible that triton is unavailable, the model is not compatible, or that the incorrect model repository directory is being use.",
         )
 
     return GenericMessageResponse(message=f"Model {model_name} loaded successfully.")
@@ -206,7 +205,7 @@ async def unload_model(request: UnloadModelRequest) -> GenericMessageResponse:
     except grpcclient.InferenceServerException as e:
         raise HTTPException(
             status_code=500,
-            detail=f"Error unloading model {model_name}: {str(e)}\nIt is possible that triton is unavailable, the model is not compatible, or that the incorrect model repository directory is being use",
+            detail=f"Error unloading model {model_name}: {e!s}\nIt is possible that triton is unavailable, the model is not compatible, or that the incorrect model repository directory is being use",
         )
     return GenericMessageResponse(message=f"Model {model_name} unloaded successfully.")
 
@@ -231,7 +230,7 @@ async def delete_model(request: UnloadModelRequest) -> GenericMessageResponse:
     except grpcclient.InferenceServerException as e:
         raise HTTPException(
             status_code=500,
-            detail=f"Error deleting model {model_name}: {str(e)}\nIt is possible that triton is unavailable, the model is not compatible, or that the incorrect model repository directory is being use",
+            detail=f"Error deleting model {model_name}: {e!s}\nIt is possible that triton is unavailable, the model is not compatible, or that the incorrect model repository directory is being use",
         )
     return GenericMessageResponse(message=f"Model {model_name} deleted successfully.")
 
@@ -295,7 +294,7 @@ async def download_custom_model(
         except ValueError as e:
             raise HTTPException(
                 status_code=400,
-                detail=f"Error in downloading custom model, original error: {str(e)}",
+                detail=f"Error in downloading custom model, original error: {e!s}",
             )
 
     if model_library == "sentence_transformers":
@@ -316,7 +315,7 @@ async def download_custom_model(
         except ValueError as e:
             raise HTTPException(
                 status_code=400,
-                detail=f"Error in downloading custom model, original error: {str(e)}",
+                detail=f"Error in downloading custom model, original error: {e!s}",
             )
 
     if model_library == "timm":
@@ -330,7 +329,7 @@ async def download_custom_model(
         except ValueError as e:
             raise HTTPException(
                 status_code=400,
-                detail=f"Error in downloading custom model, original error: {str(e)}",
+                detail=f"Error in downloading custom model, original error: {e!s}",
             )
 
     return GenericMessageResponse(
@@ -373,7 +372,7 @@ async def model_embedding_size(
     "/model_classification_labels",
     response_model=ModelClassificationLabelsResponse,
 )
-async def model_classification_labels(
+def model_classification_labels(
     name: str = Query(..., description="Name of the model"),
 ) -> ModelClassificationLabelsResponse:
     model_name = name
@@ -400,7 +399,7 @@ async def model_classification_labels(
         )
 
     with open(labels_path, "r") as f:
-        labels = [line.strip() for line in f.readlines()]
+        labels = [line.strip() for line in f]
 
     return ModelClassificationLabelsResponse(labels=labels)
 

@@ -1,7 +1,5 @@
 from ingrain_models.api_models.camel_model import CamelModel
 
-from typing import List, Optional
-
 
 class LoadedModelData(CamelModel):
     name: str
@@ -9,17 +7,17 @@ class LoadedModelData(CamelModel):
 
 
 class LoadedModelResponse(CamelModel):
-    models: List[LoadedModelData]
+    models: list[LoadedModelData]
 
 
 class RepositoryModel(CamelModel):
     name: str
     library: str
-    state: Optional[str]
+    state: str | None
 
 
 class RepositoryModelResponse(CamelModel):
-    models: List[RepositoryModel]
+    models: list[RepositoryModel]
 
 
 class GenericMessageResponse(CamelModel):
@@ -31,4 +29,4 @@ class ModelEmbeddingDimsResponse(CamelModel):
 
 
 class ModelClassificationLabelsResponse(CamelModel):
-    labels: List[str]
+    labels: list[str]

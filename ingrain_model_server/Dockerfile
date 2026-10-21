@@ -1,8 +1,8 @@
 # Use the base image specified in the build argument
-FROM ghcr.io/astral-sh/uv:python3.11-bookworm-slim
+FROM ghcr.io/astral-sh/uv:python3.14-trixie-slim
 
 # Install the required packages
-RUN apt-get update && apt-get install -y cmake build-essential
+RUN apt-get update && apt-get install -y cmake build-essential git
 
 # Set the working directory
 WORKDIR /app

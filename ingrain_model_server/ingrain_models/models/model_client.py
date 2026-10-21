@@ -1,5 +1,11 @@
 import os
+
 import tritonclient.grpc as grpcclient
+from ingrain_common.common import (
+    delete_model_from_repo,
+    get_model_name,
+    get_text_image_model_names,
+)
 from ingrain_models.models.triton_open_clip.clip_model import (
     create_model_and_transforms_triton,
 )
@@ -9,12 +15,6 @@ from ingrain_models.models.triton_sentence_transformers.sentence_transformer_mod
 from ingrain_models.models.triton_timm.timm_model import (
     create_model as create_model_timm,
 )
-from ingrain_common.common import (
-    get_model_name,
-    get_text_image_model_names,
-    delete_model_from_repo,
-)
-from typing import Union
 
 MODALITY_MAPPING = {
     "open_clip": {"text", "image"},
@@ -28,7 +28,7 @@ class TritonModelLoadingClient:
         self,
         triton_grpc_url: str,
         model: str,
-        pretrained: Union[str, None],
+        pretrained: str | None,
         library_name: str,
         triton_model_repository_path: str,
         custom_model_dir: str,
@@ -188,18 +188,20 @@ class TritonModelLoadingClient:
                 is_created = False
                 break
 
-            if dir_path.endswith("_text_encoder"):
-                if not os.path.exists(os.path.join(dir_path, "tokenizer")):
-                    is_partially_created = True
-                    is_created = False
-                    break
+            if dir_path.endswith("_text_encoder") and not os.path.exists(
+                os.path.join(dir_path, "tokenizer")
+            ):
+                is_partially_created = True
+                is_created = False
+                break
 
-            if dir_path.endswith("_image_encoder") or self.library_name == "timm":
-                if not os.path.exists(
-                    os.path.join(dir_path, "image_transform_config.json")
-                ):
-                    is_partially_created = True
-                    is_created = False
-                    break
+            if (
+                dir_path.endswith("_image_encoder") or self.library_name == "timm"
+            ) and not os.path.exists(
+                os.path.join(dir_path, "image_transform_config.json")
+            ):
+                is_partially_created = True
+                is_created = False
+                break
 
         return is_created, is_partially_created

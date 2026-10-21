@@ -1,8 +1,9 @@
-import ftfy
 import html
 import string
+from collections.abc import Callable
+from typing import Literal
 
-from typing import Optional, Callable, Literal
+import ftfy
 
 """Tokenizer helpers from https://github.com/mlfoundations/open_clip"""
 
@@ -19,11 +20,14 @@ def whitespace_clean(text: str) -> str:
     return text
 
 
+PUNCTUATION_TRANSLATION = str.maketrans("", "", string.punctuation)
+
+
 def canonicalize_text(
     text: str,
     *,
-    keep_punctuation_exact_string: Optional[bool] = None,
-    trans_punctuation: dict = str.maketrans("", "", string.punctuation),
+    keep_punctuation_exact_string: bool | None = None,
+    trans_punctuation: dict = PUNCTUATION_TRANSLATION,
 ) -> str:
     """Returns canonicalized `text` (lowercase and punctuation removed).
 

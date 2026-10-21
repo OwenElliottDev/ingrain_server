@@ -1,21 +1,26 @@
-from fastapi import FastAPI, HTTPException
-from fastapi.responses import ORJSONResponse
-import time
 import asyncio
+import os
+import time
+from threading import Lock
+
+import tritonclient.grpc as grpcclient
+from fastapi import FastAPI, HTTPException
+from ingrain_common.common import get_model_name, get_model_source_name
 from ingrain_inference.api_models.request_models import (
     EmbeddingRequest,
-    TextEmbeddingRequest,
-    ImageEmbeddingRequest,
     ImageClassificationRequest,
+    ImageEmbeddingRequest,
+    TextEmbeddingRequest,
 )
 from ingrain_inference.api_models.response_models import (
     EmbeddingResponse,
-    TextEmbeddingResponse,
-    ImageEmbeddingResponse,
     GenericMessageResponse,
-    MetricsResponse,
     ImageClassificationResponse,
+    ImageEmbeddingResponse,
+    MetricsResponse,
+    TextEmbeddingResponse,
 )
+from ingrain_inference.inference.model_cache import LRUModelCache
 from ingrain_inference.inference.triton_open_clip.clip_inference import (
     TritonCLIPInferenceClient,
 )
@@ -25,23 +30,16 @@ from ingrain_inference.inference.triton_sentence_transformers.sentence_transform
 from ingrain_inference.inference.triton_timm.timm_inference import (
     TritonTimmInferenceClient,
 )
-from ingrain_common.common import get_model_name, get_model_source_name
-from ingrain_inference.inference.model_cache import LRUModelCache
-from threading import Lock
 from tritonclient.utils import (
     InferenceServerException as TritonInferenceServerException,
 )
-import tritonclient.grpc as grpcclient
-import os
-from typing import Union
-
 
 TRITON_GRPC_URL = os.getenv("TRITON_GRPC_URL", "localhost:8001")
 TRITON_CLIENT = grpcclient.InferenceServerClient(url=TRITON_GRPC_URL, verbose=False)
 TRITON_MODEL_REPOSITORY_PATH = "model_repository"
 CUSTOM_MODEL_DIR = "custom_model_files"
 
-app = FastAPI(default_response_class=ORJSONResponse)
+app = FastAPI()
 
 # Model cache and lock
 MODEL_CACHE = LRUModelCache(capacity=5)
@@ -51,7 +49,7 @@ EMBEDDING_MODEL_LIBRARIES = ["open_clip", "sentence_transformers"]
 CLASSIFICATION_MODEL_LIBRARIES = ["timm"]
 
 
-def get_model_library(model_name: str, pretrained: Union[str, None]) -> str:
+def get_model_library(model_name: str, pretrained: str | None) -> str:
     friendly_name = get_model_name(model_name, pretrained)
     try:
         with open(
@@ -80,12 +78,14 @@ def get_model_library(model_name: str, pretrained: Union[str, None]) -> str:
     return None
 
 
-def client_from_cache(model_name: str, pretrained: Union[str, None]) -> Union[
-    TritonCLIPInferenceClient,
-    TritonSentenceTransformersInferenceClient,
-    TritonTimmInferenceClient,
-    None,
-]:
+def client_from_cache(
+    model_name: str, pretrained: str | None
+) -> (
+    TritonCLIPInferenceClient
+    | TritonSentenceTransformersInferenceClient
+    | TritonTimmInferenceClient
+    | None
+):
     cache_key = (model_name, pretrained)
 
     with MODEL_CACHE_LOCK:
@@ -437,7 +437,7 @@ async def metrics() -> MetricsResponse:
             model["name"] = f"{source_name}/{tower}"
         stats.append(model)
 
-    return MetricsResponse(**{"model_stats": stats})
+    return MetricsResponse(model_stats=stats)
 
 
 if __name__ == "__main__":

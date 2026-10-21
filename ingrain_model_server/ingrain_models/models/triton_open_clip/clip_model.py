@@ -1,31 +1,29 @@
+import json
 import os
+
 import open_clip
 from huggingface_hub import hf_hub_download
-import json
 from ingrain_common.common import (
-    save_library_name,
     custom_model_exists,
+    save_library_name,
     save_model_source_name,
 )
+from ingrain_models.models.torchvision_transform_conversion import (
+    image_transform_dict_from_torch_transforms,
+)
 from ingrain_models.models.triton_open_clip.clip_converting import (
-    onnx_convert_open_clip_model,
     generate_image_clip_config,
     generate_text_clip_config,
+    onnx_convert_open_clip_model,
 )
 from ingrain_models.models.triton_open_clip.tokenizer_tools.export_tokenizer import (
     export_tokenizer,
 )
 
-from ingrain_models.models.torchvision_transform_conversion import (
-    image_transform_dict_from_torch_transforms,
-)
-
-from typing import Union
-
 
 def create_model_and_transforms_triton(
     model_name: str,
-    pretrained: Union[str, None],
+    pretrained: str | None,
     triton_model_repository_path: str,
     custom_model_dir: str,
     friendly_text_name: str,

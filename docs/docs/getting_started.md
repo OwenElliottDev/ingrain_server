@@ -40,7 +40,7 @@ services:
       - ./model_repository:/app/model_repository 
       - ./model_cache:/app/model_cache/
   triton:
-    image: nvcr.io/nvidia/tritonserver:25.08-py3
+    image: nvcr.io/nvidia/tritonserver:26.09-py3
     container_name: triton
     runtime: nvidia
     environment:
@@ -87,9 +87,11 @@ Models are accessable via the same naming conventions as their underlying librar
 ```python
 import open_clip
 
-model, _, preprocess = open_clip.create_model_and_transforms('Mhf-hub:apple/MobileCLIP-S1-OpenCLIP')
+model, _, preprocess = open_clip.create_model_and_transforms(
+    "Mhf-hub:apple/MobileCLIP-S1-OpenCLIP"
+)
 model.eval()
-tokenizer = open_clip.get_tokenizer('hf-hub:apple/MobileCLIP-S1-OpenCLIP')
+tokenizer = open_clip.get_tokenizer("hf-hub:apple/MobileCLIP-S1-OpenCLIP")
 ```
 
 To do the same in Ingrain, you would use the following code:
@@ -108,7 +110,7 @@ Sentence Transformers:
 ```python
 from sentence_transformers import SentenceTransformer
 
-model = SentenceTransformer('intfloat/e5-small-v2')
+model = SentenceTransformer("intfloat/e5-small-v2")
 ```
 
 Ingrain:
@@ -132,8 +134,8 @@ client = ingrain.Client()
 client.load_model(name="intfloat/e5-small-v2", library="sentence_transformers")
 
 response = client.infer(
-    name="intfloat/e5-small-v2", 
-    text=["I am a sentence.", "I am another sentence.", "I am a third sentence."]
+    name="intfloat/e5-small-v2",
+    text=["I am a sentence.", "I am another sentence.", "I am a third sentence."],
 )
 ```
 
@@ -141,12 +143,12 @@ This will return a dictionary like so:
 
 ```python
 {
-    'textEmbeddings': [
+    "textEmbeddings": [
         [-0.028349684551358223, 0.03690376505255699, ...],
         [-0.657342546546734223, 0.46323376505255699, ...],
-        [-0.035745636365643294, 0.95440376505255699, ...]
-    ], 
-    'imageEmbeddings': None, 
-    'processingTimeMs': 17.091903000618913
+        [-0.035745636365643294, 0.95440376505255699, ...],
+    ],
+    "imageEmbeddings": None,
+    "processingTimeMs": 17.091903000618913,
 }
 ```

@@ -1,8 +1,7 @@
-from PIL import Image, ImageOps
-import numpy as np
 import json
 
-from typing import List
+import numpy as np
+from PIL import Image, ImageOps
 
 
 class ImageTransformBase:
@@ -80,8 +79,8 @@ class CenterCropImage(ParameterisedImageTransformBase):
             if image_width == crop_width and image_height == crop_height:
                 return image
 
-        left = int(round((image_width - crop_width) / 2.0))
-        top = int(round((image_height - crop_height) / 2.0))
+        left = round((image_width - crop_width) / 2.0)
+        top = round((image_height - crop_height) / 2.0)
 
         return image.crop((left, top, left + crop_width, top + crop_height))
 
@@ -101,7 +100,7 @@ class ConvertToRGB(NonParameterisedImageTransformBase):
         return ConvertToRGB()
 
 
-def image_transform_from_dict(data: List[dict]) -> ImagePreprocessor:
+def image_transform_from_dict(data: list[dict]) -> ImagePreprocessor:
     transforms = []
 
     for t_dict in data:

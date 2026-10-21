@@ -1,5 +1,6 @@
-import sys
 import os
+import sys
+
 import pytest
 
 # Append the root directory to the sys.path

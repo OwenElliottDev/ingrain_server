@@ -1,9 +1,10 @@
-import os
 import json
+import os
+import time
+
 import ingrain
 import requests
-import time
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, jsonify, render_template, request
 
 # Constants
 MODEL = "intfloat/e5-small-v2"

@@ -8,7 +8,7 @@
 <!-- Go over all the following points, and put an `x` in all the boxes that apply -->
 
 - [ ] I have added tests to cover my changes.
-- [ ] I have run `uv run black .` for formatting.
+- [ ] I have run `uv run ruff format` for formatting.
 - [ ] I have run `uv run ruff check` for linting.
 - [ ] I have tested the docker build using `docker-compose.yml`.
 - [ ] I have synchronised the repo dev dependencies with the individual server dependencies.

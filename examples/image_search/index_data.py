@@ -1,10 +1,10 @@
-import os
-import requests
-import ingrain
 import base64
-from tqdm import tqdm
+import os
 from concurrent.futures import ProcessPoolExecutor
 
+import ingrain
+import requests
+from tqdm import tqdm
 
 # Constants
 HNSWLIB_SERVER_URL = "http://localhost:8685"

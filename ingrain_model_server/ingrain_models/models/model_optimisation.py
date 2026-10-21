@@ -1,9 +1,9 @@
+from typing import Literal
+
 import onnx
+from ingrain_common.common import FP16_ENABLED, MAX_BATCH_SIZE
 from onnxconverter_common import float16
 from onnxoptimizer import optimize
-from ingrain_common.common import FP16_ENABLED, MAX_BATCH_SIZE
-
-from typing import List, Dict, Literal
 
 
 def convert_to_float16(onnx_model_path: str, output_path: str) -> None:
@@ -68,7 +68,7 @@ def optimize_onnx_model(onnx_model_path: str, output_path: str) -> None:
 
 
 def generate_tensorrt_config(
-    input_shapes: Dict[str, List[int]],
+    input_shapes: dict[str, list[int]],
     input_dtype: Literal["FP16", "FP32", "INT32", "INT64"],
 ) -> str:
     if FP16_ENABLED:
@@ -81,12 +81,12 @@ def generate_tensorrt_config(
         batch_size = i + 1
 
         inputs = ""
-        for shape_name in input_shapes:
+        for shape_name, shape in input_shapes.items():
             inputs += f"""        inputs {{
             key: "{shape_name}"
             value: {{
                 data_type: TYPE_{input_dtype}
-                dims: [ {', '.join(map(str, input_shapes[shape_name]))} ]
+                dims: [ {", ".join(map(str, shape))} ]
                 random_data: true
             }}
         }},

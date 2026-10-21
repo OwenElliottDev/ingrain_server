@@ -1,4 +1,4 @@
-from timm.data import MaybeToTensor, MaybePILToTensor
+from timm.data import MaybePILToTensor, MaybeToTensor
 from torch import nn
 from torchvision.transforms import Compose, ToTensor
 
