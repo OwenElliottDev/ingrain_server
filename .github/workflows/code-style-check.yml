@@ -17,7 +17,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Set up uv
-        uses: astral-sh/setup-uv@v10
+        uses: astral-sh/setup-uv@v10.3.0
 
       - name: Run Ruff formatter check
         run: uvx ruff format --check .
@@ -30,7 +30,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Set up uv
-        uses: astral-sh/setup-uv@v10
+        uses: astral-sh/setup-uv@v10.3.0
 
       - name: Run Ruff linter check
         run: uvx ruff check .
